@@ -18,21 +18,18 @@
  */
 package de.rwth.idsg.steve.config;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import static de.rwth.idsg.steve.SteveConfiguration.CONFIG;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Sevket Goekay <sevketgokay@gmail.com>
@@ -67,7 +64,9 @@ public class SecurityConfiguration {
                         "/static/**",
                         CONFIG.getCxfMapping() + "/**",
                         WebSocketConfiguration.PATH_INFIX + "**",
-                        "/WEB-INF/views/**" // https://github.com/spring-projects/spring-security/issues/13285#issuecomment-1579097065
+                        "/WEB-INF/views/**", // https://github.com/spring-projects/spring-security/issues/13285#issuecomment-1579097065
+                        "/admin/**",
+                        CONFIG.getApiMapping() + "/**"
                     ).permitAll()
                     .requestMatchers(prefix + "/**").hasAuthority("ADMIN")
             )
@@ -87,14 +86,14 @@ public class SecurityConfiguration {
             .build();
     }
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain apiKeyFilterChain(HttpSecurity http, ApiAuthenticationManager apiAuthenticationManager) throws Exception {
-        return http.securityMatcher(CONFIG.getApiMapping() + "/**")
-            .csrf(k -> k.disable())
-            .sessionManagement(k -> k.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilter(new BasicAuthenticationFilter(apiAuthenticationManager, apiAuthenticationManager))
-            .authorizeHttpRequests(k -> k.anyRequest().authenticated())
-            .build();
-    }
+    // @Bean
+    // @Order(1)
+    // public SecurityFilterChain apiKeyFilterChain(HttpSecurity http, ApiAuthenticationManager apiAuthenticationManager) throws Exception {
+    //     return http.securityMatcher(CONFIG.getApiMapping() + "/**")
+    //         .csrf(k -> k.disable())
+    //         .sessionManagement(k -> k.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    //         .addFilter(new BasicAuthenticationFilter(apiAuthenticationManager, apiAuthenticationManager))
+    //         .authorizeHttpRequests(k -> k.anyRequest().authenticated())
+    //         .build();
+    // }
 }

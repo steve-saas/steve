@@ -1,0 +1,136 @@
+
+<!-- <%@ include file="00-header.jsp" %> -->
+<html>
+
+    <head>
+        <link rel="icon" href="../static/images/favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="../static/images/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+        <link rel="stylesheet" type="text/css" href="../static/css/jquery-ui.min.css">
+        <link rel="stylesheet" type="text/css" href="../static/css/jquery-ui-timepicker-addon.min.css">
+        <script type="text/javascript" src="../static/js/jquery-2.0.3.min.js" ></script>
+        <script type="text/javascript" src="../static/js/jquery-ui.min.js" ></script>
+        <script type="text/javascript" src="../static/js/jquery-ui-timepicker-addon.min.js" ></script>
+        <script type="text/javascript" src="../static/js/script.js" ></script>
+        <script type="text/javascript" src="../static/js/stupidtable.min.js" ></script>
+        <title>SteVe - Home</title>
+    </head>
+
+    <body>  
+        <div class="content">
+            <div class="tileWrapper">
+                <a class="tileRow1" href="${ctxPath}/manager/chargepoints">
+                    Number of<br>Charge Points
+                    <span class="base formatNumber">${stats.numChargeBoxes}</span>
+                </a>
+                <a class="tileRow1" href="${ctxPath}/manager/ocppTags">
+                    Number of<br>OCPP Tags
+                    <span class="base formatNumber">${stats.numOcppTags}</span>
+                </a>
+                <a class="tileRow1" href="${ctxPath}/manager/users">
+                    Number of<br>Users
+                    <span class="base formatNumber">${stats.numUsers}</span>
+                </a>
+                <a class="tileRow1" href="${ctxPath}/manager/reservations">
+                    Number of<br>Active Reservations
+                    <span class="base formatNumber">${stats.numReservations}</span>
+                </a>
+                <a class="tileRow1" href="${ctxPath}/manager/transactions">
+                    Number of<br>Active Transactions
+                    <span class="base formatNumber">${stats.numTransactions}</span>
+                </a>
+                <a class="tileRow1" href="${ctxPath}/manager/home/ocppJsonStatus">
+                Number of Connected<br>JSON Charge Points
+                    <span class="baseTable">
+                        <span class="baseRow">
+                            <span class="baseCell">OCPP 1.2 :</span>
+                            <span class="baseCell formatNumber">${stats.numOcpp12JChargeBoxes}</span>
+                        </span>
+                        <span class="baseRow">
+                            <span class="baseCell">OCPP 1.5 :</span>
+                            <span class="baseCell formatNumber">${stats.numOcpp15JChargeBoxes}</span>
+                        </span>
+                        <span class="baseRow">
+                            <span class="baseCell">OCPP 1.6 :</span>
+                            <span class="baseCell formatNumber">${stats.numOcpp16JChargeBoxes}</span>
+                        </span>
+                    </span>
+                </a>
+                <a class="tileRow1" href="${ctxPath}/manager/chargepoints">
+                    Received Heartbeats
+                    <span class="baseTable">
+                        <span class="baseRow">
+                            <span class="baseCell">Today :</span>
+                            <span class="baseCell formatNumber">${stats.heartbeatToday}</span>
+                        </span>
+                        <span class="baseRow">
+                            <span class="baseCell">Yesterday :</span>
+                            <span class="baseCell formatNumber">${stats.heartbeatYesterday}</span>
+                        </span>
+                        <span class="baseRow">
+                            <span class="baseCell">Earlier :</span>
+                            <span class="baseCell formatNumber">${stats.heartbeatEarlier}</span>
+                        </span>
+                    </span>
+                </a>
+                <a class="tileRow1" href="${ctxPath}/manager/home/connectorStatus">
+                    Connector Status
+                    <span class="baseTable">
+                        <c:forEach items="${stats.statusCountMap}" var="it">
+                            <span class="baseRow">
+                                <span class="baseCell">${it.key} :</span>
+                                <span class="baseCell formatNumber">${it.value}</span>
+                            </span>
+                        </c:forEach>
+                    </span>
+                </a>
+            </div>
+        </div>
+        <script>
+            /*
+            fetch("/steve/api/v1/home/stats", { 
+                mode: 'no-cors',
+                // "credentials": "same-origin"
+            })
+            .then(response => response.json())
+            .then(data => {
+                    console.log(data);
+                    initExps(data)
+            });
+            */
+
+            function initExps(data) {
+                $.find('.formatNumber').forEach(el => {
+                    let exp = el.innerText.trim();
+                    //console.log(exp,',',exp.length);
+                    exp = exp.substring(2, exp.length-1);
+                    //console.log(exp);
+                    let text = eval(exp);
+                    //console.log(exp, ':', text);
+                    el.innerText = text;
+                });
+    
+            }
+
+            function initExp(n) {
+                let exp = el.nodeValue.trim();
+                //console.log(exp,',',exp.length);
+                exp = exp.substring(2, exp.length-1);
+                //console.log(exp);
+                let text = Function(" return scope."+exp)();
+                //console.log(exp, ':', text);
+                el.nodeValue = text;
+            }
+
+            function traverse(n, f) {
+                f.apply(0,[n]);
+                if(n.childNodes) {
+                    n.childNodes.forEach(e => traverse(e, f));
+                }
+            }
+
+        </script>
+    </body>
+</html>
+
+<!-- <%@ include file="00-footer.jsp" %> -->

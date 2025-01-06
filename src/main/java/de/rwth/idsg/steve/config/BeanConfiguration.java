@@ -218,6 +218,7 @@ public class BeanConfiguration implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("static/");
+        registry.addResourceHandler("/admin/**").addResourceLocations("admin/");
     }
 
     @Override
